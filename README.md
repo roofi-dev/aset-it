@@ -46,14 +46,14 @@ Sistem inventaris aset TI untuk petugas dan administrator. Backend Laravel menya
 4. Jalankan aplikasi dari dua terminal di direktori project:
 
    ```powershell
-   php artisan serve
+   php artisan serve --port=8010
    ```
 
    ```powershell
    npm run dev
    ```
 
-   Buka `http://127.0.0.1:8000`.
+   Buka `http://127.0.0.1:8010`.
 
 ## Akun development
 
