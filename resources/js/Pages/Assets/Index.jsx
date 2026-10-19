@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Badge, Button, InputSearch, Modal, TextArea, TextField } from '@idds/react';
 import {
@@ -73,13 +73,17 @@ export default function AssetsIndex({ assets, filters, categories, canManage, ca
     const [editing, setEditing] = useState(null);
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm(blankAsset);
     const currentFilters = usePage().url;
-    const filterParams = useMemo(() => new URLSearchParams(currentFilters.split('?')[1] ?? ''), [currentFilters]);
 
     function changeFilter(key, value) {
-        if (value) filterParams.set(key, value);
-        else filterParams.delete(key);
-        filterParams.delete('page');
-        router.get('/assets', Object.fromEntries(filterParams), { preserveState: true, replace: true });
+        const params = new URLSearchParams(currentFilters.split('?')[1] ?? '');
+        const normalizedValue = value ?? '';
+
+        if ((params.get(key) ?? '') === normalizedValue) return;
+
+        if (normalizedValue) params.set(key, normalizedValue);
+        else params.delete(key);
+        params.delete('page');
+        router.get('/assets', Object.fromEntries(params), { preserveState: true, replace: true });
     }
 
     function openCreate() {

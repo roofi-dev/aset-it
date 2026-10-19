@@ -7,6 +7,7 @@ use App\Models\ConditionCheck;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AssetWorkflowTest extends TestCase
@@ -121,5 +122,18 @@ class AssetWorkflowTest extends TestCase
         $this->assertSame(24, Asset::count());
         $this->assertDatabaseHas('users', ['email' => 'admin@aset.local', 'role' => 'admin']);
         $this->assertDatabaseHas('users', ['email' => 'petugas@aset.local', 'role' => 'staff']);
+    }
+
+    public function test_asset_listing_keeps_the_requested_page(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $admin = User::where('email', 'admin@aset.local')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get('/assets?page=2')
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Assets/Index')
+                ->where('assets.current_page', 2)
+                ->has('assets.data', 8));
     }
 }
